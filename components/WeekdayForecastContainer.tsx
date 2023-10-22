@@ -1,10 +1,16 @@
 import { View, Text, Image, ScrollView } from "react-native";
 import React from "react";
 import { CalendarDaysIcon } from "react-native-heroicons/solid";
-import { dailyForecast } from "../constants";
 import WeekdayForecastCard from "./WeekdayForecastCard";
+import { ForecastDaysDataProps } from "../types";
 
-export default function WeekdayForecastContainer() {
+interface WeekdayForecastContainerProps {
+  forecastday: ForecastDaysDataProps[];
+}
+
+export default function WeekdayForecastContainer({
+  forecastday,
+}: WeekdayForecastContainerProps) {
   return (
     <View className=" space-y-3">
       <View className="flex-row items-center mx-5 space-x-2">
@@ -16,12 +22,13 @@ export default function WeekdayForecastContainer() {
         contentContainerStyle={{ paddingHorizontal: 15 }}
         showsHorizontalScrollIndicator={false}
       >
-        {dailyForecast.map((day, index) => {
+        {forecastday.map((day, index) => {
           return (
             <WeekdayForecastCard
-              weekday={day.weekday}
-              temperature={day.temperature}
+              data={day.date}
+              temperature={day.day.avgtemp_c}
               key={index}
+              condition={day.day.condition.text}
             />
           );
         })}

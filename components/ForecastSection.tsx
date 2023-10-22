@@ -1,31 +1,38 @@
 import { View, Text, Image } from "react-native";
 import React from "react";
 import WeekdayForecastContainer from "../components/WeekdayForecastContainer";
+import { WeatherDataProps } from "../types";
+import { weatherImages } from "../constants";
 
-export default function ForecastSection() {
+export default function ForecastSection({
+  current,
+  forecast,
+  location,
+}: WeatherDataProps) {
   return (
     <View className="mx-4 flex justify-around flex-1 mb-2">
       {/* location */}
       <Text className="text-white text-center text-2xl font-bold">
-        London,
+        {location.name},
         <Text className="text-lg font-semibold text-gray-300">
-          United Kingdom
+          {" "}
+          {location.country}
         </Text>
       </Text>
       {/* weather image */}
       <View className="flex-row justify-center">
         <Image
-          source={require("../assets/images/cloud.png")}
+          source={weatherImages[current?.condition?.text]}
           className="w-52 h-52"
         />
       </View>
       {/* degree celcius */}
       <View className="space-y-2">
         <Text className="text-center font-bold text-white text-6xl ml-5">
-          23°
+          {current.temp_c.toFixed(0)}°
         </Text>
         <Text className="text-center text-white text-xl tracking-widest">
-          Cloud
+          {current.condition.text}
         </Text>
       </View>
       {/* other stats */}
@@ -35,14 +42,18 @@ export default function ForecastSection() {
             source={require("../assets/icons/wind.png")}
             className="h-6 w-6"
           />
-          <Text className="text-white font-semibold text-base">2m/s</Text>
+          <Text className="text-white font-semibold text-base">
+            {current.wind_kph}km/h
+          </Text>
         </View>
         <View className="flex-row space-x-2 items-center">
           <Image
             source={require("../assets/icons/drop.png")}
             className="h-6 w-6"
           />
-          <Text className="text-white font-semibold text-base">23%</Text>
+          <Text className="text-white font-semibold text-base">
+            {current.humidity}%
+          </Text>
         </View>
         <View className="flex-row space-x-2 items-center">
           <Image
@@ -53,7 +64,7 @@ export default function ForecastSection() {
         </View>
       </View>
       {/* forecast for next days */}
-      <WeekdayForecastContainer />
+      {forecast && <WeekdayForecastContainer {...forecast} />}
     </View>
   );
 }
