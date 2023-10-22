@@ -10,6 +10,7 @@ import { fetchLocations, fetchWeatherForecast } from "../api/weather";
 import { LocationDataProps, WeatherDataProps } from "../types";
 import { initialData } from "../constants";
 import * as Progress from "react-native-progress";
+import { getData, storeData } from "../utils/asyncStorage";
 
 export default function HomeScreen() {
   const [showSearch, setShowSearch] = useState(false);
@@ -18,10 +19,23 @@ export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    handleLocaion("Dubai");
+    initialCityLoading();
   }, []);
 
-  const handleLocaion = (location: string) => {
+  const initialCityLoading = async () => {
+    const myCity = await getData("city");
+    let firstCity = "Almaty";
+    if (myCity) firstCity = myCity;
+    fetchWeatherForecast({ cityName: firstCity, days: 7 }).then(
+      (data: WeatherDataProps) => {
+        setWeather(data);
+        storeData("city", firstCity);
+        setIsLoading(false);
+      }
+    );
+  };
+
+  const handleLocaion = async (location: string) => {
     setLocations([]);
     setShowSearch(false);
     setIsLoading(true);
@@ -29,6 +43,7 @@ export default function HomeScreen() {
       (data: WeatherDataProps) => {
         setWeather(data);
         setIsLoading(false);
+        storeData("city", location);
       }
     );
   };
